@@ -5,7 +5,7 @@ import requests
 app = Flask(__name__)
 
 # Google Apps Script URL
-APPS_SCRIPT_URL = "https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec"
+APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxtU2Z96QdqvKpiRSwRxXWHza9Gk7UTbXZYXSuiEOKw7WM3pGZmGHQxuRH9-_A9B-yp/exec"
 
 @app.route("/process", methods=["POST"])
 def process():

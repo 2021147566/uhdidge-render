@@ -1,9 +1,12 @@
 from flask import Flask, request, jsonify
 from search import process_url
 import requests
+from flask_cors import CORS
 
 app = Flask(__name__)
 
+# CORS 설정
+CORS(app, origins=["https://uhdidge.netlify.app"])
 # Google Apps Script URL
 APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzPNJCPkth5upiQO0WSzW1jlD3berUEAQXLX6UWdjnwfoGViP5K5RcooGNmCMijXCIZ/exec"
 

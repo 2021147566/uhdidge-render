@@ -1,0 +1,5 @@
+flask
+selenium
+google-generativeai
+vertexai
+newspaper3k

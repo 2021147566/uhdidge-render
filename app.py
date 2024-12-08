@@ -1,11 +1,11 @@
 from flask import Flask, request, jsonify
+from search import process_url
 import requests
 
 app = Flask(__name__)
 
 # Google Apps Script URL
-APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwgkSJjKUc8ld0uRtFJydLkc0bBJnA2xhjt-kZrHmaXJJVE5QzX06xLXlxR7FCbG8W1/exec"
-
+APPS_SCRIPT_URL = "https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec"
 
 @app.route("/process", methods=["POST"])
 def process():
@@ -17,18 +17,28 @@ def process():
         if not url:
             return jsonify({"error": "URL is required"}), 400
 
+        # URL 처리 (요약 및 제목 생성)
+        result = process_url(url)
+        if not result:
+            return jsonify({"error": "Failed to process the URL"}), 500
+
+        summary = result["summary"]
+        title = result["title"]
+
         # Google Apps Script로 데이터 전송
         payload = {
-            "action": "saveData",  # Apps Script에서 처리할 액션 이름
+            "action": "saveData",
             "userid": userid,
             "url": url,
+            "summary": summary,
+            "title": title,
         }
 
         response = requests.post(APPS_SCRIPT_URL, json=payload)
         if response.status_code == 200:
-            result = response.json()
-            if result.get("success"):
-                return jsonify({"message": "Data saved successfully", "userid": userid})
+            script_result = response.json()
+            if script_result.get("success"):
+                return jsonify({"message": "Data saved successfully", "userid": userid, "summary": summary, "title": title})
             else:
                 return jsonify({"error": "Failed to save data in Apps Script"}), 500
         else:

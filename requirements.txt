@@ -6,3 +6,4 @@ newspaper3k
 lxml_html_clean
 webdriver-manager
 google-cloud-aiplatform
+gunicorn==21.2.0

@@ -50,9 +50,6 @@ def fetch_main_content(url):
 # Selenium을 사용한 동적 콘텐츠 추출
 def fetch_content_with_selenium(url):
     try:
-        # Render 환경에 맞게 Chromedriver 설치
-        os.system("apt-get update && apt-get install -y chromium-driver")
-
         # Selenium Chrome 옵션 설정
         options = Options()
         options.add_argument("--headless")
@@ -63,12 +60,13 @@ def fetch_content_with_selenium(url):
             "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
         )
 
-        service = Service("/usr/bin/chromedriver")  # Render 환경의 Chromedriver 경로
+        # ChromeDriver 서비스 설정
+        service = Service("/usr/local/bin/chromedriver")
         driver = webdriver.Chrome(service=service, options=options)
 
         # URL 접속 및 대기
         driver.get(url)
-        time.sleep(3)
+        driver.implicitly_wait(10)  # 페이지 로드 대기
 
         # 동적 콘텐츠 추출
         try:
@@ -127,3 +125,18 @@ def process_url(url):
     except Exception as e:
         print(f"Error processing URL: {e}")
         return None
+
+
+# 사용 예제
+if __name__ == "__main__":
+    url = input("요약 및 제목/해시태그를 생성할 URL을 입력하세요: ")
+
+    # URL 처리 및 결과 출력
+    result = process_url(url)
+
+    if result:
+        print("\n결과:")
+        print(f"요약: {result['summary']}")
+        print(f"제목: {result['title']}")
+    else:
+        print("URL 처리 중 오류가 발생했습니다.")

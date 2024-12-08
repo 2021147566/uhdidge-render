@@ -4,3 +4,4 @@ google-generativeai
 vertexai
 newspaper3k
 lxml_html_clean
+webdriver-manager

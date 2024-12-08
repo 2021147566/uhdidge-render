@@ -1,20 +1,10 @@
 from flask import Flask, request, jsonify
-from search import process_url  # search.py의 process_url 함수 사용
-import os
+import requests
 
 app = Flask(__name__)
 
-
-# Google Cloud 인증 설정
-def setup_google_credentials():
-    credentials_json = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS_JSON")
-    if credentials_json:
-        with open("keyfile.json", "w") as f:
-            f.write(credentials_json)
-        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "keyfile.json"
-
-
-setup_google_credentials()
+# Google Apps Script URL
+APPS_SCRIPT_URL = "https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec"
 
 
 @app.route("/process", methods=["POST"])
@@ -27,22 +17,23 @@ def process():
         if not url:
             return jsonify({"error": "URL is required"}), 400
 
-        # URL 처리
-        print(f"Processing URL: {url}")
-        result = process_url(url)
+        # Google Apps Script로 데이터 전송
+        payload = {
+            "action": "saveData",  # Apps Script에서 처리할 액션 이름
+            "userid": userid,
+            "url": url,
+        }
 
-        if result:
-            return jsonify(
-                {
-                    "summary": result["summary"],
-                    "title": result["title"],
-                    "userid": userid,
-                }
-            )
+        response = requests.post(APPS_SCRIPT_URL, json=payload)
+        if response.status_code == 200:
+            result = response.json()
+            if result.get("success"):
+                return jsonify({"message": "Data saved successfully", "userid": userid})
+            else:
+                return jsonify({"error": "Failed to save data in Apps Script"}), 500
         else:
-            return jsonify({"error": "Failed to process the URL"}), 500
+            return jsonify({"error": f"Apps Script error: {response.status_code}"}), 500
     except Exception as e:
-        print(f"Error processing request: {e}")
         return jsonify({"error": str(e)}), 500
 
 

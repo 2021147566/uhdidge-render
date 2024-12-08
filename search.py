@@ -50,8 +50,6 @@ def fetch_main_content(url):
 # Selenium을 사용한 동적 콘텐츠 추출
 def fetch_content_with_selenium(url):
     try:
-        # Render 환경에 맞게 Chromedriver 설치
-        os.system("apt-get update && apt-get install -y chromium-driver")
 
         # Selenium Chrome 옵션 설정
         options = Options()
@@ -63,12 +61,11 @@ def fetch_content_with_selenium(url):
             "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
         )
 
-        service = Service("/usr/bin/chromedriver")  # Render 환경의 Chromedriver 경로
         driver = webdriver.Chrome(service=service, options=options)
 
         # URL 접속 및 대기
         driver.get(url)
-        time.sleep(3)
+        driver.implicitly_wait(10)  # 페이지 로드 대기
 
         # 동적 콘텐츠 추출
         try:

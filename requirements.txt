@@ -3,5 +3,6 @@ selenium
 google-generativeai
 vertexai
 newspaper3k
+flask_cors
 lxml_html_clean
 gunicorn
